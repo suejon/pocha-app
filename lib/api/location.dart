@@ -36,3 +36,22 @@ Future<List<Location>> getNearbyLocations(
   // TODO: Get stores by id
   return Location.listFromJson(res);
 }
+
+// TODO: remove if unused
+Future<List<Location>> getLocationsForStore(String storeId) async {
+  final res = await supabase
+      .from('location')
+      .select()
+      .eq('store_id', storeId)
+      .order('created_at', ascending: false);
+  return Location.listFromJson(res);
+}
+
+Future<Location> createLocationForStore(
+    String storeId, Location location) async {
+  final response = await supabase.from('location').insert(location.toJson());
+  if (response.error != null) {
+    throw response.error!;
+  }
+  return location;
+}
