@@ -15,11 +15,13 @@ class Location {
 
   String? displayAddress;
 
+  String? userId;
+
   Location();
 
   @override
   String toString() {
-    return 'Location[id=$id, latitude=$latitude, longitude=$longitude, storeId=$storeId, createdAt=$createdAt, updatedAt=$updatedAt, geoloc=$geoloc, displayAddress=$displayAddress, ]';
+    return 'Location[id=$id, latitude=$latitude, longitude=$longitude, storeId=$storeId, createdAt=$createdAt, updatedAt=$updatedAt, geoloc=$geoloc, displayAddress=$displayAddress, userId=$userId, ]';
   }
 
   Location.fromJson(Map<String, dynamic> json) {
@@ -30,7 +32,8 @@ class Location {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     geoloc = json['geoloc'];
-    displayAddress = json['display_address'];
+    displayAddress = json['display_name'];
+    userId = json['userId'];
   }
 
   Map<String, dynamic> toJson() {
@@ -42,7 +45,8 @@ class Location {
       'created_at': createdAt,
       'updated_at': updatedAt,
       'geoloc': geoloc,
-      'display_address': displayAddress,
+      'display_name': displayAddress,
+      'userId': userId,
     };
   }
 

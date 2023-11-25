@@ -15,11 +15,13 @@ class Media {
 
   String? mimeType;
 
+  String? userId;
+
   Media();
 
   @override
   String toString() {
-    return 'Media[id=$id, ref=$ref, createdAt=$createdAt, updatedAt=$updatedAt, deletedAt=$deletedAt, storeId=$storeId, type=$type, mime_type=$mimeType, ]';
+    return 'Media[id=$id, ref=$ref, createdAt=$createdAt, updatedAt=$updatedAt, deletedAt=$deletedAt, storeId=$storeId, type=$type, mime_type=$mimeType, user_id=$userId, ]';
   }
 
   Media.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,7 @@ class Media {
     storeId = json['store_id'];
     type = json['type'];
     mimeType = json['mime_type'];
+    userId = json['user_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -43,6 +46,7 @@ class Media {
       'store_id': storeId,
       'type': type,
       'mime_type': mimeType,
+      'user_id': userId,
     };
   }
 
