@@ -1,14 +1,17 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
+import 'package:new_mac_test/api/location.dart';
 import 'package:new_mac_test/components/info_draggrable_scrollable_sheet.dart';
 import 'package:new_mac_test/components/widget_to_map_icon.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import '../models/location_distance.dart';
+import '../models/media.dart';
+import '../models/store.dart';
 import '../utilities/triangle_clipper.dart';
+import 'package:new_mac_test/models/location.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -30,9 +33,13 @@ class _MapScreenState extends State<MapScreen> {
     "https://placehold.co/200x.png",
     "https://placehold.co/200x.png",
   ];
-
   Map<String, BitmapDescriptor> markerIcons = {};
-  GoogleMapController? _mapController;
+  late GoogleMapController gMapController;
+  late LatLng middlePointOfScreenOnMap;
+  String pickedMarker = "";
+  var store;
+  List<LocationDistance> _store = [];
+  late LatLngBounds _visibleRegion;
 
   @override
   void initState() {
@@ -49,6 +56,11 @@ class _MapScreenState extends State<MapScreen> {
           markerId: MarkerId(markerIds[i]),
           position: positions[i],
           icon: await getCustomIcon(markerIds[i], iconUrls[i], positions[i]),
+          onTap: () {
+            setState(() {
+              pickedMarker = markerIds[i];
+            });
+          },
         ),
       );
     }
@@ -139,8 +151,35 @@ class _MapScreenState extends State<MapScreen> {
       ],
     ).toBitmapDescriptor();
   }
-  late GoogleMapController gMapController;
-  late LatLng middlePointOfScreenOnMap;
+
+  void _updateVisibleRegion() async {
+    if (gMapController != null) {
+      await Future.delayed(Duration(milliseconds: 500));
+      LatLngBounds bounds = await gMapController.getVisibleRegion();
+      setState(() {
+        _visibleRegion = bounds;
+      });
+
+      // Retrieve all four corners
+      LatLng northeast = bounds.northeast;
+      LatLng southwest = bounds.southwest;
+      LatLng southeast = LatLng(southwest.latitude, northeast.longitude);
+      LatLng northwest = LatLng(northeast.latitude, southwest.longitude);
+
+      print("Northeast Corner: $northeast");
+      print("Southwest Corner: $southwest");
+      print("Southeast Corner: $southeast");
+      print("Northwest Corner: $northwest");
+
+      // List<Location> visibleLocations = await getVisibleLocations(
+      //   southwest.longitude.toFloat(),
+      //   southwest.latitude.toFloat(),
+      //   northeast.longitude.toFloat(),
+      //   northeast.latitude.toFloat(),
+      // );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +193,13 @@ class _MapScreenState extends State<MapScreen> {
                     draggable: true,
                     markerId: MarkerId((Random().nextInt(100) + 1).toString()),
                     position: middlePointOfScreenOnMap,
-                    icon: await getCustomIcon((Random().nextInt(100) + 1).toString(), "https://placehold.co/200x.png", middlePointOfScreenOnMap),
+                    icon: await getCustomIcon("d5f1f059-1e19-4c70-8ca0-163aa6448179", "https://placehold.co/200x.png", middlePointOfScreenOnMap),
+                    onTap: () {
+                      print("Marker tapped: ${("d5f1f059-1e19-4c70-8ca0-163aa6448179")}");
+                      setState(() {
+                        pickedMarker = ("d5f1f059-1e19-4c70-8ca0-163aa6448179");
+                      });
+                    },
                   ),
                 );
                 setState(() {});
@@ -165,15 +210,25 @@ class _MapScreenState extends State<MapScreen> {
               children: [
                 GoogleMap(
                   onCameraMove: (CameraPosition cameraPosition) => middlePointOfScreenOnMap = cameraPosition.target,
-                  onMapCreated: (GoogleMapController controller) => gMapController = controller,
+                  onMapCreated: (GoogleMapController controller) {
+                    setState(() {
+                      gMapController = controller;
+                      _updateVisibleRegion();
+                    });
+                  },
                   initialCameraPosition: CameraPosition(
                     target: initialLocation,
                     zoom: 14,
                   ),
                   markers: markerList.toSet(),
+                  onTap: (LatLng latLng) {
+                    setState(() {
+                      pickedMarker = "";
+                    });
+                  },
                 ),
                 InfoDraggrableScrollableSheet(
-                    id: 'd5f1f059-1e19-4c70-8ca0-163aa6448179')
+                    id: pickedMarker)
               ],
             ),
           )
