@@ -1,16 +1,12 @@
+import 'dart:async';
 import 'dart:math';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:new_mac_test/api/location.dart';
 import 'package:new_mac_test/components/info_draggrable_scrollable_sheet.dart';
 import 'package:new_mac_test/components/widget_to_map_icon.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../models/location_distance.dart';
-import '../models/media.dart';
-import '../models/store.dart';
 import '../utilities/triangle_clipper.dart';
 import 'package:new_mac_test/models/location.dart';
 
@@ -33,6 +29,7 @@ class _MapScreenState extends State<MapScreen> {
   var store;
   List<Location> _stores = [];
   late LatLngBounds _visibleRegion;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -129,7 +126,7 @@ class _MapScreenState extends State<MapScreen> {
         Positioned(
           bottom: 0,
           right: 45,
-          child: Container(
+          child: SizedBox(
             width: 15,
             height: 15,
             child: ClipPath(
@@ -145,26 +142,24 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _getStoresVisibleRegion() async {
-    if (gMapController != null) {
-      await Future.delayed(Duration(milliseconds: 500));
-      LatLngBounds bounds = await gMapController.getVisibleRegion();
-      setState(() {
-        _visibleRegion = bounds;
-      });
-      LatLng northeast = bounds.northeast;
-      LatLng southwest = bounds.southwest;
+    await Future.delayed(const Duration(milliseconds: 500));
+    LatLngBounds bounds = await gMapController.getVisibleRegion();
+    setState(() {
+      _visibleRegion = bounds;
+    });
+    LatLng northeast = bounds.northeast;
+    LatLng southwest = bounds.southwest;
 
-      _stores = await getVisibleLocations(
-        southwest.longitude,
-        southwest.latitude,
-        northeast.longitude,
-        northeast.latitude,
-      );
+    _stores = await getVisibleLocations(
+      southwest.longitude,
+      southwest.latitude,
+      northeast.longitude,
+      northeast.latitude,
+    );
 
-      loadInitialPoints(_stores);
-      print(_stores);
+    loadInitialPoints(_stores);
+    print(_stores);
     }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -194,8 +189,11 @@ class _MapScreenState extends State<MapScreen> {
             body: Stack(
               children: [
                 GoogleMap(
-                  onCameraMove: (CameraPosition cameraPosition) => middlePointOfScreenOnMap = cameraPosition.target,
-                  onMapCreated: (GoogleMapController controller) {
+              onCameraMove: (CameraPosition cameraPosition) => {
+                middlePointOfScreenOnMap = cameraPosition.target,
+                _getStoresVisibleRegion(),
+              },
+              onMapCreated: (GoogleMapController controller) {
                     setState(() {
                       gMapController = controller;
                       _getStoresVisibleRegion();
@@ -211,7 +209,9 @@ class _MapScreenState extends State<MapScreen> {
                       pickedMarker = "";
                     });
                   },
-                ),
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
+            ),
                 InfoDraggrableScrollableSheet(id: pickedMarker)
               ],
             ),

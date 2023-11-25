@@ -9,7 +9,7 @@ import 'package:new_mac_test/models/store.dart';
 class InfoDraggrableScrollableSheet extends StatefulWidget {
   final String id;
 
-  InfoDraggrableScrollableSheet({super.key, required this.id});
+  const InfoDraggrableScrollableSheet({super.key, required this.id});
 
   @override
   State<InfoDraggrableScrollableSheet> createState() =>
@@ -50,12 +50,12 @@ class _InfoDraggrableScrollableSheetState
       builder: (BuildContext context, ScrollController scrollController) {
         return _store.$1.id != ""
             ? widget.id != "" ? Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                 color: Colors.white,
                 child: ListView(
                   controller: scrollController,
                   children: [
-                    Icon(Icons.drag_handle),
+                    const Icon(Icons.drag_handle),
                     Text(
                       _store.$1.name ?? "Store Name",
                       style: const TextStyle(
@@ -71,11 +71,11 @@ class _InfoDraggrableScrollableSheetState
                       ],
                     ),
                     const SizedBox(height: 16),
-                    Container(
+                    SizedBox(
                       height: 100,
                       width: MediaQuery.of(context).size.width,
                       child: ListView.separated(
-                          physics: ClampingScrollPhysics(),
+                          physics: const ClampingScrollPhysics(),
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
                           itemCount: _store.$3.length,
@@ -88,9 +88,9 @@ class _InfoDraggrableScrollableSheetState
                                   fit: BoxFit.cover,
                                   height: 100),
                           separatorBuilder: (BuildContext context, int index) =>
-                              SizedBox(width: 8)),
+                              const SizedBox(width: 8)),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     const Text(
                       "Address",
                       style: TextStyle(
@@ -106,17 +106,17 @@ class _InfoDraggrableScrollableSheetState
                             fontSize: 16,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         IconButton(
                             onPressed: () async {
-                              Clipboard.setData(ClipboardData(text: 'test'));
+                              Clipboard.setData(const ClipboardData(text: 'test'));
                             },
-                            icon: Icon(Icons.copy, size: 16)),
+                            icon: const Icon(Icons.copy, size: 16)),
                       ],
                     ),
                     Row(
                       children: [
-                        IconButton(onPressed: () {}, icon: Icon(Icons.add))
+                        IconButton(onPressed: () {}, icon: const Icon(Icons.add))
                       ],
                     )
                   ],
