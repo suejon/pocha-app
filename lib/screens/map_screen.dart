@@ -7,6 +7,8 @@ import 'package:new_mac_test/api/location.dart';
 import 'package:new_mac_test/components/info_draggrable_scrollable_sheet.dart';
 import 'package:new_mac_test/components/widget_to_map_icon.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../api/media.dart';
+import '../models/media.dart';
 import '../utilities/triangle_clipper.dart';
 import 'package:new_mac_test/models/location.dart';
 
@@ -39,12 +41,13 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> loadInitialPoints(List<Location> stores) async {
     for (int i = 0; i < stores.length; i++) {
+      List<Media> media = await getMediaByStore(stores[i].storeId.toString());
       markerList.add(
         Marker(
           draggable: true,
           markerId: MarkerId(stores[i].storeId.toString()),
           position: LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble()),
-          icon: await getCustomIcon(stores[i].storeId.toString(), "https://placehold.co/200x.png", LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble())),
+          icon: await getCustomIcon(stores[i].storeId.toString(), "https://chjzbaxswixtqvtytkyz.supabase.co/storage/v1/object/public/" + media[1].ref!, LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble())),
           onTap: () {
             setState(() {
               pickedMarker = markerIds[i];
