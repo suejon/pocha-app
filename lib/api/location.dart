@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:new_mac_test/models/address.dart';
 import 'package:new_mac_test/models/location.dart';
 import 'package:new_mac_test/models/location_distance.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:http/http.dart' as http;
 
 final supabase = Supabase.instance.client;
 
@@ -44,10 +47,30 @@ Future<List<Location>> getLocationsForStore(String storeId) async {
 
 Future<Location> createLocationForStore(
     String storeId, Location location) async {
+  if (location.latitude == null || location.longitude == null) {
+    throw Exception('Latitude and longitude are required');
+  }
+
+  var address = await getAddress(location.latitude!, location.longitude!);
+  location.displayAddress = address.displayName;
+
   final response = await supabase.from('location').insert(location.toJson());
   if (response.error != null) {
     throw response.error!;
   }
 
   return location;
+}
+
+Future<ExternalAddress> getAddress(double lat, double long) async {
+  var url = Uri.parse(
+      'https://nominatim.openstreetmap.org/reverse?lat=$lat&lon=$long&accept-language=en&format=json');
+
+  var response = await http.get(url);
+  if (response.statusCode == 200) {
+    var body = jsonDecode(response.body);
+    return ExternalAddress.fromJson(body);
+  } else {
+    throw Exception('Failed to load address');
+  }
 }
