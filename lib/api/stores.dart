@@ -2,6 +2,7 @@ import 'package:new_mac_test/models/category.dart';
 import 'package:new_mac_test/models/location.dart';
 import 'package:new_mac_test/models/media.dart';
 import 'package:new_mac_test/models/store.dart';
+import 'package:new_mac_test/models/visit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final supabase = Supabase.instance.client;
@@ -19,26 +20,43 @@ Future<List<StoreWithDetails>> getStores() async {
   return StoreWithDetails.listFromJson(res);
 }
 
-Future<(Store, Location, Media, List<Category>)> getStore(String id) async {
+Future<(Store, Location, Media, List<Category>, Visit?)> getStore(
+    String id) async {
   final store = await supabase.from('store').select().eq('id', id).single();
   final location = await supabase
       .from('location')
       .select()
       .eq('store_id', id)
       .order('created_at')
+      .limit(1)
       .single();
-  final pic =
-      await supabase.from('media').select().order('created_at').single();
+  final pic = await supabase
+      .from('media')
+      .select()
+      .order('created_at')
+      .limit(1)
+      .single();
   final categories = await supabase
       .from('category')
       .select('*, store_category(*)')
       .eq('store_category.store_id', id)
       .order('created_at');
+  print("location: $location");
+  print(location['id']);
+  final lastVisit = await supabase
+      .from('visit')
+      .select()
+      .eq('location_id', location['id'])
+      .order('visited_at')
+      .limit(1)
+      .single();
+  print("lastVisit jono: $lastVisit");
   return (
     Store.fromJson(store),
     Location.fromJson(location),
     Media.fromJson(pic),
     Category.listFromJson(categories),
+    lastVisit != null ? Visit.fromJson(lastVisit) : null,
   );
 }
 
