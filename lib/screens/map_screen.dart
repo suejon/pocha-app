@@ -46,8 +46,8 @@ class _MapScreenState extends State<MapScreen> {
             icon: markerIcon,
           ),
           Marker(
-            markerId: MarkerId("marker2"),
-            position: LatLng(37.415768808487435, -122.08440050482749),
+            markerId: const MarkerId("marker2"),
+            position: const LatLng(37.415768808487435, -122.08440050482749),
             icon: markerIcon,
           ),
         },
