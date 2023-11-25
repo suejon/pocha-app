@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 final supabase = Supabase.instance.client;
+var uuid = const Uuid();
 
 Future<String?> getMimeType(File file) async {
   var raf = await file.open(mode: FileMode.read);
@@ -46,10 +47,8 @@ Future<String> uploadMedia(String storeId, File file) async {
     throw Exception('Unsupported file type');
   }
 
-  const uuid = Uuid();
-
-  var key =
-      await supabase.storage.from('media').upload('$storeId/$uuid>', file);
+  var id = uuid.v4();
+  var key = await supabase.storage.from('media').upload('$storeId/$id', file);
 
   await supabase.from('media').insert([
     {
