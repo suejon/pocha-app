@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
 import 'package:new_mac_test/components/register_store_modal.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:new_mac_test/api/location.dart';
@@ -34,6 +33,7 @@ class _MapScreenState extends State<MapScreen> {
   List<Location> _stores = [];
   late LatLngBounds _visibleRegion;
   Timer? _debounce;
+  String appState = "view";
 
   @override
   void initState() {
@@ -49,7 +49,8 @@ class _MapScreenState extends State<MapScreen> {
           draggable: true,
           markerId: MarkerId(stores[i].storeId.toString()),
           position: LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble()),
-          icon: await getCustomIcon(stores[i].storeId.toString(), "https://chjzbaxswixtqvtytkyz.supabase.co/storage/v1/object/public/" + media[1].ref!, LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble())),
+          icon: await getCustomIcon(stores[i].storeId.toString(), "https://chjzbaxswixtqvtytkyz.supabase.co/storage/v1/object/public/" + media[0].ref!,
+              LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble())),
           onTap: () {
             setState(() {
               pickedMarker = stores[i].storeId.toString();
@@ -173,22 +174,20 @@ class _MapScreenState extends State<MapScreen> {
     return loading != true
         ? Scaffold(
             floatingActionButton: FloatingActionButton.extended(
-              label: const FittedBox(child: Text('Add Markers')),
+              label: FittedBox(child: Text(appState == "view" ? "Add Markers" : "Confirm Location")),
               onPressed: () async {
-                markerList.add(
-                  Marker(
-                    draggable: true,
-                    markerId: MarkerId((Random().nextInt(100) + 1).toString()),
-                    position: middlePointOfScreenOnMap,
-                    icon: await getCustomIcon("d5f1f059-1e19-4c70-8ca0-163aa6448179", "https://placehold.co/200x.png", middlePointOfScreenOnMap),
-                    onTap: () {
-                      print("Marker tapped: ${("d5f1f059-1e19-4c70-8ca0-163aa6448179")}");
-                      setState(() {
-                        pickedMarker = ("d5f1f059-1e19-4c70-8ca0-163aa6448179");
-                      });
-                    },
-                  ),
-                );
+                if (appState == "view") {
+                  setState(() {
+                    pickedMarker = "";
+                    appState = "reticle";
+                  });
+                } else if (appState == "reticle") {
+                  setState(() {
+                    print("Add new marker and somehow redraw map");
+                    print("Add at" + middlePointOfScreenOnMap.toString());
+                    appState = "view";
+                  });
+                }
                 setState(() {});
               },
             ),
@@ -196,11 +195,13 @@ class _MapScreenState extends State<MapScreen> {
             body: Stack(
               children: [
                 GoogleMap(
-              onCameraMove: (CameraPosition cameraPosition) => {
-                middlePointOfScreenOnMap = cameraPosition.target,
-                _getStoresVisibleRegion(),
-              },
-              onMapCreated: (GoogleMapController controller) {
+                  onCameraMove: (CameraPosition cameraPosition) => {
+                    setState(() {
+                      middlePointOfScreenOnMap = cameraPosition.target;
+                    }),
+                    _getStoresVisibleRegion(),
+                  },
+                  onMapCreated: (GoogleMapController controller) {
                     setState(() {
                       gMapController = controller;
                       _getStoresVisibleRegion();
@@ -213,14 +214,38 @@ class _MapScreenState extends State<MapScreen> {
                   markers: markerList.toSet(),
                   onTap: (LatLng latLng) {
                     setState(() {
-                      pickedMarker = "";
+                      appState = "view";
                     });
                   },
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-            ),
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
+                ),
                 InfoDraggrableScrollableSheet(id: pickedMarker),
-                RegisterStoreModal()
+                appState == "reticle"
+                    ? const Center(
+                        child: Text("📍",
+                            style: TextStyle(
+                              fontSize: 30,
+                            )),
+                      )
+                    : Container(),
+                appState == "reticle" ? RegisterStoreModal(middlePointOfScreenOnMap: middlePointOfScreenOnMap,) : Container(),
+                // Visibility(
+                //   visible: appState == "view",
+                //   child: Positioned(
+                //     bottom: 16,
+                //     right: 16,
+                //     child: FloatingActionButton.extended(
+                //       label: const Text(appState == "view" ? "Add Markers" : "Confirm Location"),
+                //       onPressed: () async {
+                //         setState(() {
+                //           pickedMarker = "";
+                //           appState = "reticle";
+                //         });
+                //       },
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           )

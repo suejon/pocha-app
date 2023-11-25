@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:new_mac_test/api/category.dart';
 import 'package:new_mac_test/api/location.dart';
@@ -10,11 +11,10 @@ import 'package:new_mac_test/models/category.dart';
 import 'package:new_mac_test/models/store.dart';
 
 class RegisterStoreModal extends StatefulWidget {
-  final double latitude;
-  final double longitude;
+  final LatLng middlePointOfScreenOnMap;
 
   RegisterStoreModal(
-      {super.key, required this.latitude, required this.longitude});
+      {super.key, required this.middlePointOfScreenOnMap});
 
   @override
   State<RegisterStoreModal> createState() => _RegisterStoreModalState();
@@ -164,7 +164,7 @@ class _RegisterStoreModalState extends State<RegisterStoreModal> {
                             child: Icon(Icons.add),
                           ),
                         ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () async {
                       Store res = await createStore(Store(
@@ -173,7 +173,7 @@ class _RegisterStoreModalState extends State<RegisterStoreModal> {
                       String storeId = res.id ?? "";
                       if (storeId != '') {
                         await createLocationForStore(
-                            storeId, widget.latitude, widget.longitude);
+                            storeId, widget.middlePointOfScreenOnMap.latitude, widget.middlePointOfScreenOnMap.longitude);
                         await updateStoreCategories(storeId,
                             _selectedCategories.map((e) => e.id ?? 0).toList());
                         for (XFile image in _images!) {
@@ -181,9 +181,9 @@ class _RegisterStoreModalState extends State<RegisterStoreModal> {
                         }
                       }
                     },
-                    child: Text("Register"),
+                    child: const Text("Register"),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                 ],
               ));
         });
