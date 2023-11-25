@@ -52,7 +52,7 @@ class _MapScreenState extends State<MapScreen> {
           icon: await getCustomIcon(stores[i].storeId.toString(), "https://chjzbaxswixtqvtytkyz.supabase.co/storage/v1/object/public/" + media[1].ref!, LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble())),
           onTap: () {
             setState(() {
-              pickedMarker = markerIds[i];
+              pickedMarker = stores[i].storeId.toString();
             });
           },
         ),
@@ -219,7 +219,8 @@ class _MapScreenState extends State<MapScreen> {
               myLocationEnabled: true,
               myLocationButtonEnabled: true,
             ),
-                InfoDraggrableScrollableSheet(id: pickedMarker)
+                InfoDraggrableScrollableSheet(id: pickedMarker),
+                RegisterStoreModal()
               ],
             ),
           )

@@ -51,6 +51,12 @@ class _InfoDraggrableScrollableSheetState
 
   @override
   Widget build(BuildContext context) {
+    if (widget.id != ""){
+      if(widget.id != _store.$1.id){
+        print("They are different");
+        initStoreDetails();
+      }
+    }
     return DraggableScrollableSheet(
       expand: true,
       initialChildSize: 0.32,
@@ -58,7 +64,7 @@ class _InfoDraggrableScrollableSheetState
       maxChildSize: 0.6,
       shouldCloseOnMinExtent: true,
       builder: (BuildContext context, ScrollController scrollController) {
-        return _store.$1.id != null
+        return _store.$1.id != null ? widget.id != ""
             ? Container(
                 width: MediaQuery.of(context).size.width - 32,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
@@ -66,10 +72,10 @@ class _InfoDraggrableScrollableSheetState
                 child: ListView(
                   controller: scrollController,
                   children: [
-                    Icon(Icons.drag_handle),
+                    const Icon(Icons.drag_handle),
                     Text(
                       _store.$1.name ?? "Store Name",
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -196,7 +202,7 @@ class _InfoDraggrableScrollableSheetState
                     )
                   ],
                 ))
-            : Container();
+            : Container() : Container();
       },
     );
   }
