@@ -13,6 +13,9 @@ dependencies:
   http: ^0.13.3
   geolocator: ^10.1.0
   permission_handler: ^11.0.0
+  custom_marker: ^1.0.0
+  cached_network_image: ^3.3.0
+  flutter_custom_clippers: ^2.1.0
 
 dev_dependencies:
   flutter_test:
