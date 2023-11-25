@@ -33,7 +33,7 @@ class Location {
     updatedAt = json['updated_at'];
     geoloc = json['geoloc'];
     displayAddress = json['display_name'];
-    userId = json['userId'];
+    userId = json['user_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -46,7 +46,7 @@ class Location {
       'updated_at': updatedAt,
       'geoloc': geoloc,
       'display_name': displayAddress,
-      'userId': userId,
+      'user_id': userId,
     };
   }
 
