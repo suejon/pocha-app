@@ -33,14 +33,4 @@ class Store {
   static List<Store> listFromJson(List<dynamic> json) {
     return json.map((value) => Store.fromJson(value)).toList();
   }
-
-  static Map<String, Store> mapFromJson(
-      Map<String, Map<String, dynamic>> json) {
-    var map = new Map<String, Store>();
-    if (json != null && json.length > 0) {
-      json.forEach((String key, Map<String, dynamic> value) =>
-          map[key] = new Store.fromJson(value));
-    }
-    return map;
-  }
 }
