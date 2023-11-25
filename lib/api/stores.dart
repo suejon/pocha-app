@@ -1,3 +1,4 @@
+import 'package:new_mac_test/models/category.dart';
 import 'package:new_mac_test/models/location.dart';
 import 'package:new_mac_test/models/media.dart';
 import 'package:new_mac_test/models/store.dart';
@@ -18,7 +19,7 @@ Future<List<StoreWithDetails>> getStores() async {
   return StoreWithDetails.listFromJson(res);
 }
 
-Future<(Store, Location, Media)> getStore(String id) async {
+Future<(Store, Location, Media, List<Category>)> getStore(String id) async {
   final store = await supabase.from('store').select().eq('id', id).single();
   final location = await supabase
       .from('location')
@@ -28,10 +29,16 @@ Future<(Store, Location, Media)> getStore(String id) async {
       .single();
   final pic =
       await supabase.from('media').select().order('created_at').single();
+  final categories = await supabase
+      .from('category')
+      .select('*, store_category(*)')
+      .eq('store_category.store_id', id)
+      .order('created_at');
   return (
     Store.fromJson(store),
     Location.fromJson(location),
-    Media.fromJson(pic)
+    Media.fromJson(pic),
+    Category.listFromJson(categories),
   );
 }
 
