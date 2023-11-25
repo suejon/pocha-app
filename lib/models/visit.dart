@@ -7,7 +7,9 @@ class Visit {
 
   String? visitedAt;
 
-  Visit();
+  Visit({this.locationId, DateTime? visitedAt}) {
+    this.visitedAt = visitedAt.toString();
+  }
 
   @override
   String toString() {
@@ -23,7 +25,6 @@ class Visit {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'user_id': userId,
       'location_id': locationId,
       'visited_at': visitedAt
