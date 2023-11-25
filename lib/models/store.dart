@@ -1,4 +1,5 @@
 import 'package:new_mac_test/models/location.dart';
+import 'package:new_mac_test/models/media.dart';
 
 class Store {
   String? id;
@@ -37,24 +38,27 @@ class Store {
   }
 }
 
-class StoreWithLocation extends Store {
+class StoreWithDetails extends Store {
   List<Location> locations = [];
+  List<Media> media = [];
 
-  StoreWithLocation();
+  StoreWithDetails();
 
   @override
   String toString() {
     final locs = locations.toString();
-    return 'Store[id=$id, name=$name, createdAt=$createdAt, updatedAt=$updatedAt, locations=$locs ]';
+    final med = media.toString();
+    return 'Store[id=$id, name=$name, createdAt=$createdAt, updatedAt=$updatedAt, locations=$locs, media=$med]';
   }
 
-  StoreWithLocation.fromJson(Map<String, dynamic> json) {
+  StoreWithDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     locations =
         json['location'] != null ? Location.listFromJson(json['location']) : [];
+    media = json['media'] != null ? Media.listFromJson(json['media']) : [];
   }
 
   @override
@@ -64,11 +68,12 @@ class StoreWithLocation extends Store {
       'name': name,
       'created_at': createdAt,
       'updated_at': updatedAt,
-      'locations': locations
+      'locations': locations,
+      'media': media
     };
   }
 
-  static List<StoreWithLocation> listFromJson(List<dynamic> json) {
-    return json.map((value) => StoreWithLocation.fromJson(value)).toList();
+  static List<StoreWithDetails> listFromJson(List<dynamic> json) {
+    return json.map((value) => StoreWithDetails.fromJson(value)).toList();
   }
 }
