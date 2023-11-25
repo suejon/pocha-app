@@ -24,8 +24,15 @@ class InfoDraggrableScrollableSheet extends StatefulWidget {
 
 class _InfoDraggrableScrollableSheetState
     extends State<InfoDraggrableScrollableSheet> {
-  (Store, Location, List<Media>, List<Category>, Visit?) _store =
-      (Store(), Location(), [], [], null);
+  (Store, Location, List<Media>, List<Category>, Visit?) _store = (
+    Store(
+      name: "",
+    ),
+    Location(),
+    [],
+    [],
+    null
+  );
 
   @override
   void initState() {

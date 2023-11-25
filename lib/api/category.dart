@@ -4,11 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 final supabase = Supabase.instance.client;
 
 Future<List<Category>> getCategories() async {
-  final res = await supabase.from('category').select('''
-    id,
-    name,
-    created_at,
-    ''');
+  final res = await supabase.from('category').select("*");
   return Category.listFromJson(res);
 }
 

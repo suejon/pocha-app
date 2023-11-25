@@ -11,7 +11,7 @@ class Store {
 
   String? updatedAt;
 
-  Store();
+  Store({this.name});
 
   @override
   String toString() {
@@ -26,12 +26,7 @@ class Store {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'created_at': createdAt,
-      'updated_at': updatedAt
-    };
+    return {'name': name};
   }
 
   static List<Store> listFromJson(List<dynamic> json) {
