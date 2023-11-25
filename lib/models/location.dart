@@ -21,7 +21,7 @@ class Location {
   }
 
   Location.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['id'] ?? json['location_id'];
     latitude = json['latitude'];
     longitude = json['longitude'];
     storeId = json['store_id'];
