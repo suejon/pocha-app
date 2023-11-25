@@ -1,12 +1,11 @@
 class Store {
-  /* Note: This is a Primary Key.<pk/> */
-  String id = null;
+  String? id;
 
-  String name = null;
+  String? name;
 
-  String createdAt = "now()";
+  String? createdAt;
 
-  String updatedAt = "now()";
+  String? updatedAt;
 
   Store();
 
@@ -16,7 +15,6 @@ class Store {
   }
 
   Store.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
     id = json['id'];
     name = json['name'];
     createdAt = json['created_at'];
@@ -33,9 +31,7 @@ class Store {
   }
 
   static List<Store> listFromJson(List<dynamic> json) {
-    return json == null
-        ? new List<Store>()
-        : json.map((value) => new Store.fromJson(value)).toList();
+    return json.map((value) => Store.fromJson(value)).toList();
   }
 
   static Map<String, Store> mapFromJson(
