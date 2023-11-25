@@ -142,24 +142,26 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _getStoresVisibleRegion() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    LatLngBounds bounds = await gMapController.getVisibleRegion();
-    setState(() {
-      _visibleRegion = bounds;
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      LatLngBounds bounds = await gMapController.getVisibleRegion();
+      setState(() {
+        _visibleRegion = bounds;
+      });
+      LatLng northeast = bounds.northeast;
+      LatLng southwest = bounds.southwest;
+
+      _stores = await getVisibleLocations(
+        southwest.longitude,
+        southwest.latitude,
+        northeast.longitude,
+        northeast.latitude,
+      );
+
+      loadInitialPoints(_stores);
+      print(_stores);
     });
-    LatLng northeast = bounds.northeast;
-    LatLng southwest = bounds.southwest;
-
-    _stores = await getVisibleLocations(
-      southwest.longitude,
-      southwest.latitude,
-      northeast.longitude,
-      northeast.latitude,
-    );
-
-    loadInitialPoints(_stores);
-    print(_stores);
-    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -217,5 +219,11 @@ class _MapScreenState extends State<MapScreen> {
             ),
           )
         : const Scaffold(body: Text("Loading"));
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
   }
 }
