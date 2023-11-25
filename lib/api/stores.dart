@@ -1,31 +1,37 @@
 import 'package:new_mac_test/models/location.dart';
+import 'package:new_mac_test/models/media.dart';
 import 'package:new_mac_test/models/store.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final supabase = Supabase.instance.client;
 
-Future<List<StoreWithLocation>> getStores() async {
+Future<List<StoreWithDetails>> getStores() async {
   final res = await supabase.from('store').select('''
     id,
     name,
     created_at,
     updated_at,
-    location(latitude, longitude)
+    location!location_store_id_fkey(*),
+    media!media_store_id_fkey(*)
     ''');
-
-  print("result: $res");
-  return StoreWithLocation.listFromJson(res);
+  return StoreWithDetails.listFromJson(res);
 }
 
-Future<(Store, Location)> getStore(String id) async {
+Future<(Store, Location, Media)> getStore(String id) async {
   final store = await supabase.from('store').select().eq('id', id).single();
   final location = await supabase
       .from('location')
       .select()
       .eq('store_id', id)
-      .order('created_at', ascending: false)
+      .order('created_at')
       .single();
-  return (Store.fromJson(store), Location.fromJson(location));
+  final pic =
+      await supabase.from('media').select().order('created_at').single();
+  return (
+    Store.fromJson(store),
+    Location.fromJson(location),
+    Media.fromJson(pic)
+  );
 }
 
 Future<Store> createStore(Store store) async {
@@ -45,6 +51,7 @@ Future<Store> updateStore(Store store) async {
   return store;
 }
 
+// TODO: remove if unused
 Future<List<Location>> getLocationsForStore(String storeId) async {
   final res = await supabase
       .from('location')
