@@ -1,5 +1,3 @@
-part of swagger.api;
-
 class Media {
   /* Note: This is a Primary Key.<pk/> */
   String id = null;
@@ -39,17 +37,21 @@ class Media {
       'updated_at': updatedAt,
       'deleted_at': deletedAt,
       'store_id': storeId
-     };
+    };
   }
 
   static List<Media> listFromJson(List<dynamic> json) {
-    return json == null ? new List<Media>() : json.map((value) => new Media.fromJson(value)).toList();
+    return json == null
+        ? new List<Media>()
+        : json.map((value) => new Media.fromJson(value)).toList();
   }
 
-  static Map<String, Media> mapFromJson(Map<String, Map<String, dynamic>> json) {
+  static Map<String, Media> mapFromJson(
+      Map<String, Map<String, dynamic>> json) {
     var map = new Map<String, Media>();
     if (json != null && json.length > 0) {
-      json.forEach((String key, Map<String, dynamic> value) => map[key] = new Media.fromJson(value));
+      json.forEach((String key, Map<String, dynamic> value) =>
+          map[key] = new Media.fromJson(value));
     }
     return map;
   }

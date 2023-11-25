@@ -1,7 +1,4 @@
-part of swagger.api;
-
 class RpcVisibleLocationsBody2 {
-  
   double xMax = null;
 
   double xMin = null;
@@ -26,22 +23,23 @@ class RpcVisibleLocationsBody2 {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'x_max': xMax,
-      'x_min': xMin,
-      'y_max': yMax,
-      'y_min': yMin
-     };
+    return {'x_max': xMax, 'x_min': xMin, 'y_max': yMax, 'y_min': yMin};
   }
 
   static List<RpcVisibleLocationsBody2> listFromJson(List<dynamic> json) {
-    return json == null ? new List<RpcVisibleLocationsBody2>() : json.map((value) => new RpcVisibleLocationsBody2.fromJson(value)).toList();
+    return json == null
+        ? new List<RpcVisibleLocationsBody2>()
+        : json
+            .map((value) => new RpcVisibleLocationsBody2.fromJson(value))
+            .toList();
   }
 
-  static Map<String, RpcVisibleLocationsBody2> mapFromJson(Map<String, Map<String, dynamic>> json) {
+  static Map<String, RpcVisibleLocationsBody2> mapFromJson(
+      Map<String, Map<String, dynamic>> json) {
     var map = new Map<String, RpcVisibleLocationsBody2>();
     if (json != null && json.length > 0) {
-      json.forEach((String key, Map<String, dynamic> value) => map[key] = new RpcVisibleLocationsBody2.fromJson(value));
+      json.forEach((String key, Map<String, dynamic> value) =>
+          map[key] = new RpcVisibleLocationsBody2.fromJson(value));
     }
     return map;
   }

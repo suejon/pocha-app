@@ -1,5 +1,3 @@
-part of swagger.api;
-
 class Store {
   /* Note: This is a Primary Key.<pk/> */
   String id = null;
@@ -31,17 +29,21 @@ class Store {
       'name': name,
       'created_at': createdAt,
       'updated_at': updatedAt
-     };
+    };
   }
 
   static List<Store> listFromJson(List<dynamic> json) {
-    return json == null ? new List<Store>() : json.map((value) => new Store.fromJson(value)).toList();
+    return json == null
+        ? new List<Store>()
+        : json.map((value) => new Store.fromJson(value)).toList();
   }
 
-  static Map<String, Store> mapFromJson(Map<String, Map<String, dynamic>> json) {
+  static Map<String, Store> mapFromJson(
+      Map<String, Map<String, dynamic>> json) {
     var map = new Map<String, Store>();
     if (json != null && json.length > 0) {
-      json.forEach((String key, Map<String, dynamic> value) => map[key] = new Store.fromJson(value));
+      json.forEach((String key, Map<String, dynamic> value) =>
+          map[key] = new Store.fromJson(value));
     }
     return map;
   }
