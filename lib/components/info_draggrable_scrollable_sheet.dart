@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:new_mac_test/api/stores.dart';
 import 'package:new_mac_test/components/category_chip.dart';
+import 'package:new_mac_test/models/category.dart';
 import 'package:new_mac_test/models/location.dart';
 import 'package:new_mac_test/models/media.dart';
 import 'package:new_mac_test/models/store.dart';
@@ -18,7 +18,8 @@ class InfoDraggrableScrollableSheet extends StatefulWidget {
 
 class _InfoDraggrableScrollableSheetState
     extends State<InfoDraggrableScrollableSheet> {
-  (Store, Location, List<Media>) _store = (Store(), Location(), []);
+  (Store, Location, List<Media>, List<Category>) _store =
+      (Store(), Location(), [], []);
 
   @override
   void initState() {
@@ -28,8 +29,10 @@ class _InfoDraggrableScrollableSheetState
   }
 
   initStoreDetails() async {
-    setState(() async {
-      _store = await getStore(widget.id);
+    (Store, Location, List<Media>, List<Category>) res =
+        await getStore(widget.id);
+    setState(() {
+      _store = res;
     });
   }
 
@@ -39,11 +42,12 @@ class _InfoDraggrableScrollableSheetState
       expand: true,
       initialChildSize: 0.32,
       minChildSize: 0.32,
-      maxChildSize: 0.8,
+      maxChildSize: 0.7,
       shouldCloseOnMinExtent: true,
       builder: (BuildContext context, ScrollController scrollController) {
         return _store.$1.id != null
             ? Container(
+                width: MediaQuery.of(context).size.width - 32,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                 color: Colors.white,
                 child: ListView(
@@ -57,12 +61,18 @@ class _InfoDraggrableScrollableSheetState
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Row(
-                      children: [
-                        CategoryChip(name: "dessert"),
-                        SizedBox(width: 8),
-                        CategoryChip(name: "korean"),
-                      ],
+                    Container(
+                      height: 70,
+                      width: MediaQuery.of(context).size.width,
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: _store.$4.length,
+                        itemBuilder: (BuildContext context, int index) =>
+                            CategoryChip(name: _store.$4[index].name ?? ""),
+                        scrollDirection: Axis.horizontal,
+                        separatorBuilder: (BuildContext context, int index) =>
+                            SizedBox(width: 8),
+                      ),
                     ),
                     SizedBox(height: 16),
                     Container(
@@ -92,22 +102,14 @@ class _InfoDraggrableScrollableSheetState
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          "1234 Main St, San Francisco, CA 94122",
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        IconButton(
-                            onPressed: () async {
-                              Clipboard.setData(ClipboardData(text: 'test'));
-                            },
-                            icon: Icon(Icons.copy, size: 16)),
-                      ],
+                    SizedBox(height: 8),
+                    Text(
+                      _store.$2.displayAddress ?? "Address",
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
                     ),
+                    SizedBox(height: 16),
                     Row(
                       children: [
                         TextButton.icon(
