@@ -6,13 +6,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 final supabase = Supabase.instance.client;
 
 Future<List<StoreWithDetails>> getStores() async {
+  // NOTE: if more than one relationship is found between tableA-B, you need to use explicit syntax to indicate the correct fk e.g. location!location_store_id_fkey(*),
   final res = await supabase.from('store').select('''
     id,
     name,
     created_at,
     updated_at,
-    location!location_store_id_fkey(*),
-    media!media_store_id_fkey(*)
+    location(*),
+    media(*)
     ''');
   return StoreWithDetails.listFromJson(res);
 }
