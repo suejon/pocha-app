@@ -1,57 +1,99 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  const MapScreen({Key? key}) : super(key: key);
 
   @override
   State<MapScreen> createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> {
-  LatLng initialLocation = const LatLng(37.422131, -122.084801);
-  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
+  bool loading = true;
+  late LatLng initialLocation;
+  List<String> markerIds = ["marker1", "marker2"];
+  List<LatLng> positions = [
+    const LatLng(37.5867217, 127.17032),
+    const LatLng(37.5867218, 127.17033),
+  ];
+  List<String> iconUrls = [
+    "https://placehold.co/200x.png",
+    "https://placehold.co/200x.png",
+  ];
+
+  Map<String, BitmapDescriptor> markerIcons = {};
 
   @override
   void initState() {
-    addCustomIcon();
     super.initState();
+    loadCustomIcons();
+    requestLocationPermission();
   }
 
-  Future<void> addCustomIcon() async {
-    final http.Response response = await http.get(Uri.parse("https://placehold.co/200x.png"));
-    if (response.statusCode == 200) {
-      setState(() {
-        markerIcon = BitmapDescriptor.fromBytes(response.bodyBytes);
-      });
-    } else {
-      throw Exception('Failed to load marker icon');
+  Future<void> loadCustomIcons() async {
+    for (int i = 0; i < iconUrls.length; i++) {
+      final http.Response response = await http.get(Uri.parse(iconUrls[i]));
+      if (response.statusCode == 200) {
+        final BitmapDescriptor bitmapDescriptor =
+        BitmapDescriptor.fromBytes(response.bodyBytes);
+        setState(() {
+          markerIcons[markerIds[i]] = bitmapDescriptor;
+        });
+      } else {
+        throw Exception('Failed to load marker icon');
+      }
     }
+  }
+
+  Future<void> requestLocationPermission() async {
+    var status = await Permission.location.status;
+    if (status.isDenied || status.isRestricted || status.isPermanentlyDenied) {
+      await Permission.location.request();
+    } else if (status.isGranted) {
+      getCurrentLocation();
+    }
+  }
+
+  Future<void> getCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best,
+      );
+      setState(() {
+        initialLocation = LatLng(position.latitude, position.longitude);
+        print(initialLocation);
+        loading = false;
+      });
+    } catch (e) {
+      print("Error getting current location: $e");
+    }
+  }
+
+  Set<Marker> generateMarkers() {
+    return Set<Marker>.from(List.generate(
+      markerIds.length,
+          (index) => Marker(
+        markerId: MarkerId(markerIds[index]),
+        position: positions[index],
+        draggable: true,
+        icon: markerIcons[markerIds[index]]!,
+      ),
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading != true ? Scaffold(
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: initialLocation,
           zoom: 14,
         ),
-        markers: {
-          Marker(
-            markerId: const MarkerId("marker1"),
-            position: const LatLng(37.422131, -122.084801),
-            draggable: true,
-            icon: markerIcon,
-          ),
-          Marker(
-            markerId: MarkerId("marker2"),
-            position: LatLng(37.415768808487435, -122.08440050482749),
-            icon: markerIcon,
-          ),
-        },
+        markers: generateMarkers(),
       ),
-    );
+    ) : const Scaffold(body: Text("Loading"));
   }
 }
