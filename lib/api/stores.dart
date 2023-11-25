@@ -20,7 +20,7 @@ Future<List<StoreWithDetails>> getStores() async {
   return StoreWithDetails.listFromJson(res);
 }
 
-Future<(Store, Location, Media, List<Category>, Visit?)> getStore(
+Future<(Store, Location, List<Media>, List<Category>, Visit?)> getStore(
     String id) async {
   final store = await supabase.from('store').select().eq('id', id).single();
   final location = await supabase
@@ -30,12 +30,11 @@ Future<(Store, Location, Media, List<Category>, Visit?)> getStore(
       .order('created_at')
       .limit(1)
       .single();
-  final pic = await supabase
+  final pics = await supabase
       .from('media')
       .select()
-      .order('created_at')
-      .limit(1)
-      .single();
+      .eq('store_id', id)
+      .order('created_at');
   final categories = await supabase
       .from('category')
       .select('*, store_category!inner(*)')
@@ -51,7 +50,7 @@ Future<(Store, Location, Media, List<Category>, Visit?)> getStore(
   return (
     Store.fromJson(store),
     Location.fromJson(location),
-    Media.fromJson(pic),
+    Media.listFromJson(pics),
     Category.listFromJson(categories),
     lastVisit != null ? Visit.fromJson(lastVisit) : null,
   );
