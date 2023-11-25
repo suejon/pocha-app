@@ -46,6 +46,6 @@ Future<void> updateStoreCategories(String storeId, List<int> categories) async {
     await supabase.from('store_category').insert(data);
   } catch (e) {
     print(e);
-    throw e;
+    rethrow;
   }
 }
