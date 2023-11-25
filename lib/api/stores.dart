@@ -30,8 +30,11 @@ Future<(Store, Location, List<Media>, List<Category>, Visit?)> getStore(
       .order('created_at')
       .limit(1)
       .single();
-  final pic =
-      await supabase.from('media').select().order('created_at').limit(1);
+  final pic = await supabase
+      .from('media')
+      .select('')
+      .eq('store_id', id)
+      .order('created_at', ascending: true);
   final categories = await supabase
       .from('category')
       .select('*, store_category!inner(*)')
