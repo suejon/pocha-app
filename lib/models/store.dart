@@ -1,3 +1,4 @@
+import 'package:new_mac_test/models/category.dart';
 import 'package:new_mac_test/models/location.dart';
 import 'package:new_mac_test/models/media.dart';
 
@@ -41,6 +42,7 @@ class Store {
 class StoreWithDetails extends Store {
   List<Location> locations = [];
   List<Media> media = [];
+  List<Category> categories = [];
 
   StoreWithDetails();
 
@@ -48,7 +50,8 @@ class StoreWithDetails extends Store {
   String toString() {
     final locs = locations.toString();
     final med = media.toString();
-    return 'Store[id=$id, name=$name, createdAt=$createdAt, updatedAt=$updatedAt, locations=$locs, media=$med]';
+    final cats = categories.toString();
+    return 'Store[id=$id, name=$name, createdAt=$createdAt, updatedAt=$updatedAt, locations=$locs, media=$med, categories=$cats]';
   }
 
   StoreWithDetails.fromJson(Map<String, dynamic> json) {
@@ -59,6 +62,8 @@ class StoreWithDetails extends Store {
     locations =
         json['location'] != null ? Location.listFromJson(json['location']) : [];
     media = json['media'] != null ? Media.listFromJson(json['media']) : [];
+    categories =
+        json['category'] != null ? Category.listFromJson(json['category']) : [];
   }
 
   @override
@@ -69,7 +74,8 @@ class StoreWithDetails extends Store {
       'created_at': createdAt,
       'updated_at': updatedAt,
       'locations': locations,
-      'media': media
+      'media': media,
+      'categories': categories
     };
   }
 
