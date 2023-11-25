@@ -3,13 +3,18 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:new_mac_test/api/category.dart';
+import 'package:new_mac_test/api/location.dart';
 import 'package:new_mac_test/api/media.dart';
 import 'package:new_mac_test/api/stores.dart';
 import 'package:new_mac_test/models/category.dart';
 import 'package:new_mac_test/models/store.dart';
 
 class RegisterStoreModal extends StatefulWidget {
-  RegisterStoreModal({super.key});
+  final double latitude;
+  final double longitude;
+
+  RegisterStoreModal(
+      {super.key, required this.latitude, required this.longitude});
 
   @override
   State<RegisterStoreModal> createState() => _RegisterStoreModalState();
@@ -165,9 +170,10 @@ class _RegisterStoreModalState extends State<RegisterStoreModal> {
                       Store res = await createStore(Store(
                         name: _storeName,
                       ));
-
                       String storeId = res.id ?? "";
                       if (storeId != '') {
+                        await createLocationForStore(
+                            storeId, widget.latitude, widget.longitude);
                         await updateStoreCategories(storeId,
                             _selectedCategories.map((e) => e.id ?? 0).toList());
                         for (XFile image in _images!) {
