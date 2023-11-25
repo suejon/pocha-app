@@ -40,6 +40,7 @@ class _InfoDraggrableScrollableSheetState
       initialChildSize: 0.32,
       minChildSize: 0.32,
       maxChildSize: 0.8,
+      shouldCloseOnMinExtent: true,
       builder: (BuildContext context, ScrollController scrollController) {
         return _store.$1.id != null
             ? Container(
@@ -109,7 +110,33 @@ class _InfoDraggrableScrollableSheetState
                     ),
                     Row(
                       children: [
-                        IconButton(onPressed: () {}, icon: Icon(Icons.add))
+                        TextButton.icon(
+                          style: TextButton.styleFrom(
+                            primary: Colors.red,
+                            backgroundColor: Colors.red[50],
+                          ),
+                          // <-- TextButton
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.close,
+                            size: 24.0,
+                          ),
+                          label: Text('Not here'),
+                        ),
+                        SizedBox(width: 8),
+                        TextButton.icon(
+                          // <-- TextButton
+                          style: TextButton.styleFrom(
+                            primary: Colors.green,
+                            backgroundColor: Colors.green[50],
+                          ),
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.check,
+                            size: 24.0,
+                          ),
+                          label: Text('Still here'),
+                        ),
                       ],
                     )
                   ],
