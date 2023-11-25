@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:new_mac_test/screens/map_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+Future<void> main() async {
+  await Supabase.initialize(
+    url: 'https://chjzbaxswixtqvtytkyz.supabase.co',
+    anonKey: 'public-anon-key',
+  );
   runApp(const MyApp());
 }
 
