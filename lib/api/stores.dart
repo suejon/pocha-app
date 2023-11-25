@@ -4,14 +4,28 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 final supabase = Supabase.instance.client;
 
-Future<List<Store>> getStores() async {
-  final res = await supabase.from('store').select();
+Future<List<StoreWithLocation>> getStores() async {
+  final res = await supabase.from('store').select('''
+    id,
+    name,
+    created_at,
+    updated_at,
+    location(latitude, longitude)
+    ''');
 
-  return Store.listFromJson(res);
+  print("result: $res");
+  return StoreWithLocation.listFromJson(res);
 }
 
-Future<Store> getStore(String id) async {
-  return await supabase.from('store').select().eq('id', id).single();
+Future<(Store, Location)> getStore(String id) async {
+  final store = await supabase.from('store').select().eq('id', id).single();
+  final location = await supabase
+      .from('location')
+      .select()
+      .eq('store_id', id)
+      .order('created_at', ascending: false)
+      .single();
+  return (Store.fromJson(store), Location.fromJson(location));
 }
 
 Future<Store> createStore(Store store) async {
