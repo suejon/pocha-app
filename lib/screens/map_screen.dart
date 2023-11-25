@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
+import 'package:new_mac_test/components/info_draggrable_scrollable_sheet.dart';
 import 'package:new_mac_test/components/widget_to_map_icon.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -160,14 +161,20 @@ class _MapScreenState extends State<MapScreen> {
                 },
             ),
             floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-            body: GoogleMap(
-              onCameraMove: (CameraPosition cameraPosition) => middlePointOfScreenOnMap = cameraPosition.target,
-              onMapCreated: (GoogleMapController controller) => gMapController = controller,
-              initialCameraPosition: CameraPosition(
-                target: initialLocation,
-                zoom: 14,
-              ),
-              markers: markerList.toSet(),
+            body: Stack(
+              children: [
+                GoogleMap(
+                  onCameraMove: (CameraPosition cameraPosition) => middlePointOfScreenOnMap = cameraPosition.target,
+                  onMapCreated: (GoogleMapController controller) => gMapController = controller,
+                  initialCameraPosition: CameraPosition(
+                    target: initialLocation,
+                    zoom: 14,
+                  ),
+                  markers: markerList.toSet(),
+                ),
+                InfoDraggrableScrollableSheet(
+                    id: 'd5f1f059-1e19-4c70-8ca0-163aa6448179')
+              ],
             ),
           )
         : const Scaffold(body: Text("Loading"));
