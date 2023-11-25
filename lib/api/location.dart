@@ -16,7 +16,7 @@ Future<List<Location>> getLocations() async {
 }
 
 Future<List<Location>> getVisibleLocations(
-    Float xMin, Float yMin, Float xMax, Float yMax) async {
+    double xMin, double yMin, double xMax, double yMax) async {
   var res = await supabase.rpc('visible_locations', params: {
     'x_min': xMin,
     'y_min': yMin,
