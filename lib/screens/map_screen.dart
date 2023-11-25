@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -25,37 +26,28 @@ class _MapScreenState extends State<MapScreen> {
   late LatLng initialLocation;
   List<Marker> markerList = <Marker>[];
   List<String> markerIds = ["marker1", "marker2"];
-  List<LatLng> positions = [
-    const LatLng(37.5867217, 127.17032),
-    const LatLng(37.5867219, 127.17035),
-  ];
-  List<String> iconUrls = [
-    "https://placehold.co/200x.png",
-    "https://placehold.co/200x.png",
-  ];
   Map<String, BitmapDescriptor> markerIcons = {};
   late GoogleMapController gMapController;
   late LatLng middlePointOfScreenOnMap;
   String pickedMarker = "";
   var store;
-  List<LocationDistance> _store = [];
+  List<Location> _stores = [];
   late LatLngBounds _visibleRegion;
 
   @override
   void initState() {
     super.initState();
     requestLocationPermission();
-    loadInitialPoints();
   }
 
-  Future<void> loadInitialPoints() async {
-    for (int i = 0; i < markerIds.length; i++) {
+  Future<void> loadInitialPoints(List<Location> stores) async {
+    for (int i = 0; i < stores.length; i++) {
       markerList.add(
         Marker(
           draggable: true,
-          markerId: MarkerId(markerIds[i]),
-          position: positions[i],
-          icon: await getCustomIcon(markerIds[i], iconUrls[i], positions[i]),
+          markerId: MarkerId(stores[i].storeId.toString()),
+          position: LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble()),
+          icon: await getCustomIcon(stores[i].storeId.toString(), "https://placehold.co/200x.png", LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble())),
           onTap: () {
             setState(() {
               pickedMarker = markerIds[i];
@@ -139,7 +131,7 @@ class _MapScreenState extends State<MapScreen> {
           right: 45,
           child: Container(
             width: 15,
-            height:15,
+            height: 15,
             child: ClipPath(
               clipper: TriangleClipper(),
               child: Container(
@@ -152,34 +144,27 @@ class _MapScreenState extends State<MapScreen> {
     ).toBitmapDescriptor();
   }
 
-  void _updateVisibleRegion() async {
+  void _getStoresVisibleRegion() async {
     if (gMapController != null) {
       await Future.delayed(Duration(milliseconds: 500));
       LatLngBounds bounds = await gMapController.getVisibleRegion();
       setState(() {
         _visibleRegion = bounds;
       });
-
-      // Retrieve all four corners
       LatLng northeast = bounds.northeast;
       LatLng southwest = bounds.southwest;
-      LatLng southeast = LatLng(southwest.latitude, northeast.longitude);
-      LatLng northwest = LatLng(northeast.latitude, southwest.longitude);
 
-      print("Northeast Corner: $northeast");
-      print("Southwest Corner: $southwest");
-      print("Southeast Corner: $southeast");
-      print("Northwest Corner: $northwest");
+      _stores = await getVisibleLocations(
+        southwest.longitude,
+        southwest.latitude,
+        northeast.longitude,
+        northeast.latitude,
+      );
 
-      // List<Location> visibleLocations = await getVisibleLocations(
-      //   southwest.longitude.toFloat(),
-      //   southwest.latitude.toFloat(),
-      //   northeast.longitude.toFloat(),
-      //   northeast.latitude.toFloat(),
-      // );
+      loadInitialPoints(_stores);
+      print(_stores);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +188,7 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 );
                 setState(() {});
-                },
+              },
             ),
             floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             body: Stack(
@@ -213,7 +198,7 @@ class _MapScreenState extends State<MapScreen> {
                   onMapCreated: (GoogleMapController controller) {
                     setState(() {
                       gMapController = controller;
-                      _updateVisibleRegion();
+                      _getStoresVisibleRegion();
                     });
                   },
                   initialCameraPosition: CameraPosition(
@@ -227,8 +212,7 @@ class _MapScreenState extends State<MapScreen> {
                     });
                   },
                 ),
-                InfoDraggrableScrollableSheet(
-                    id: pickedMarker)
+                InfoDraggrableScrollableSheet(id: pickedMarker)
               ],
             ),
           )
