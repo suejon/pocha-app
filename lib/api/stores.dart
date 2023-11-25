@@ -41,16 +41,13 @@ Future<(Store, Location, Media, List<Category>, Visit?)> getStore(
       .select('*, store_category(*)')
       .eq('store_category.store_id', id)
       .order('created_at');
-  print("location: $location");
-  print(location['id']);
   final lastVisit = await supabase
       .from('visit')
       .select()
       .eq('location_id', location['id'])
       .order('visited_at')
       .limit(1)
-      .single();
-  print("lastVisit jono: $lastVisit");
+      .maybeSingle();
   return (
     Store.fromJson(store),
     Location.fromJson(location),
