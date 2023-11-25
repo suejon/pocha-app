@@ -46,20 +46,22 @@ Future<List<Location>> getLocationsForStore(String storeId) async {
 }
 
 Future<Location> createLocationForStore(
-    String storeId, Location location) async {
-  if (location.latitude == null || location.longitude == null) {
-    throw Exception('Latitude and longitude are required');
-  }
+    String storeId, double lat, double long) async {
+  var address = await getAddress(lat, long);
+  var displayName = address.displayName;
 
-  var address = await getAddress(location.latitude!, location.longitude!);
-  location.displayAddress = address.displayName;
+  final response = await supabase
+      .from('location')
+      .insert({
+        'store_id': storeId,
+        'latitude': lat,
+        'longitude': long,
+        'display_name': displayName
+      })
+      .select()
+      .single();
 
-  final response = await supabase.from('location').insert(location.toJson());
-  if (response.error != null) {
-    throw response.error!;
-  }
-
-  return location;
+  return Location.fromJson(response);
 }
 
 Future<ExternalAddress> getAddress(double lat, double long) async {
