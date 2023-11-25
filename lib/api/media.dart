@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:mime/mime.dart';
+import 'package:new_mac_test/models/media.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -13,15 +15,17 @@ Future<String?> getMimeType(File file) async {
   return lookupMimeType(file.path, headerBytes: headerBytes);
 }
 
-Future getMediaById(String id) async {
-  return await supabase.from('media').select().eq('id', id);
+Future<Media> getMediaById(String id) async {
+  var res = await supabase.from('media').select().eq('id', id).single();
+  return Media.fromJson(res);
 }
 
-Future getMediaByStore(String storeId) async {
-  return await supabase.from('media').select().eq('store_id', storeId);
+Future<List<Media>> getMediaByStore(String storeId) async {
+  var res = await supabase.from('media').select().eq('store_id', storeId);
+  return Media.listFromJson(res);
 }
 
-Future uploadMedia(String storeId, File file) async {
+Future<String> uploadMedia(String storeId, File file) async {
   var mimeType = await getMimeType(file);
 
   if (mimeType == null) {
