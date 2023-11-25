@@ -51,7 +51,6 @@ Future uploadMedia(String storeId, File file) async {
     {
       'store_id': storeId,
       'ref': key,
-      'uuid': uuid,
       'type': type,
       'mime_type': mimeType,
     }
