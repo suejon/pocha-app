@@ -1,0 +1,11 @@
+*.icloud
+.DS_Store
+.metadata
+.packages
+.dart_tool
+.idea
+*key.properties
+*Matchfile
+flutter/ios/Runner.xcodeproj/project.pbxproj
+
+flutter/ios/Runner.xcodeproj/
