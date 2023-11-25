@@ -38,7 +38,7 @@ Future<(Store, Location, Media, List<Category>, Visit?)> getStore(
       .single();
   final categories = await supabase
       .from('category')
-      .select('*, store_category(*)')
+      .select('*, store_category!inner(*)')
       .eq('store_category.store_id', id)
       .order('created_at');
   final lastVisit = await supabase
