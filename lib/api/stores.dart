@@ -57,11 +57,10 @@ Future<(Store, Location, List<Media>, List<Category>, Visit?)> getStore(
 }
 
 Future<Store> createStore(Store store) async {
-  final response = await supabase.from('store').insert(store.toJson());
-  if (response?.error != null) {
-    throw response.error!;
-  }
-  return store;
+  final response =
+      await supabase.from('store').insert(store.toJson()).select().single();
+
+  return Store.fromJson(response);
 }
 
 Future<Store> updateStore(Store store) async {
