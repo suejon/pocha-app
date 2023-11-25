@@ -1,7 +1,9 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 final supabase = Supabase.instance.client;
 
-bool getStores(int atomicNumber) {
-  return final data = await supabase
+Future<bool> getStores(int atomicNumber) async {
+  return  await supabase
   .from('store')
   .select();
 }
