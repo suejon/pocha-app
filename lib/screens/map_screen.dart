@@ -105,6 +105,8 @@ class _MapScreenState extends State<MapScreen> {
                 imageUrl,
                 width: 80,
                 height: 80,
+                cacheHeight: 80,
+                cacheWidth: 80,
                 fit: BoxFit.cover,
               ),
             ),
