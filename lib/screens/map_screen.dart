@@ -53,8 +53,7 @@ class _MapScreenState extends State<MapScreen> {
           draggable: true,
           markerId: MarkerId(stores[i].storeId.toString()),
           position: LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble()),
-          icon: await getCustomIcon(stores[i].storeId.toString(), url,
-              LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble())),
+          icon: await getCustomIcon(stores[i].storeId.toString(), url, LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble())),
           onTap: () {
             setState(() {
               pickedMarker = stores[i].storeId.toString();
@@ -91,7 +90,6 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<BitmapDescriptor> getCustomIcon(String markerId, String imageUrl, LatLng positions) async {
-    print(imageUrl);
     return Stack(
       children: [
         Padding(
@@ -169,7 +167,6 @@ class _MapScreenState extends State<MapScreen> {
         northeast.longitude,
         northeast.latitude,
       );
-
       loadInitialPoints(_stores);
       print(_stores);
     });
@@ -179,23 +176,6 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return loading != true
         ? Scaffold(
-            // floatingActionButton: FloatingActionButton.extended(
-            //   label: FittedBox(child: Text(appState == "view" ? "Add Markers" : "Confirm Location")),
-            //   onPressed: () async {
-            //     if (appState == "view") {
-            //       setState(() {
-            //         pickedMarker = "";
-            //         appState = "reticle";
-            //       });
-            //     } else if (appState == "reticle") {
-            //       setState(() {
-            //         appState = "view";
-            //       });
-            //     }
-            //     setState(() {});
-            //   },
-            // ),
-            // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             body: Stack(
               children: [
                 GoogleMap(
@@ -233,14 +213,25 @@ class _MapScreenState extends State<MapScreen> {
                             )),
                       )
                     : Container(),
-                appState == "reticle" ? RegisterStoreModal(middlePointOfScreenOnMap: middlePointOfScreenOnMap,) : Container(),
+                appState == "reticle"
+                    ? RegisterStoreModal(
+                        middlePointOfScreenOnMap: middlePointOfScreenOnMap,
+                        onRegisterStore: () {
+                          setState(() {
+                            appState = "view";
+                          });
+                        },
+                      )
+                    : Container(),
                 Visibility(
                   visible: appState == "view",
                   child: Positioned(
                     bottom: 16,
                     left: 16,
                     child: FloatingActionButton.extended(
-                      label: Text(appState == "view" ? "Add Markers" : "Confirm Location"),
+                     backgroundColor: Colors.deepOrange,
+                      foregroundColor: Colors.white,
+                      label: Text("Add Markers"),
                       onPressed: () async {
                         setState(() {
                           pickedMarker = "";

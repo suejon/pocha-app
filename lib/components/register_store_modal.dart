@@ -14,10 +14,7 @@ class RegisterStoreModal extends StatefulWidget {
   final LatLng middlePointOfScreenOnMap;
   final Function onRegisterStore;
 
-  const RegisterStoreModal(
-      {super.key,
-      required this.middlePointOfScreenOnMap,
-      required this.onRegisterStore});
+  const RegisterStoreModal({super.key, required this.middlePointOfScreenOnMap, required this.onRegisterStore});
 
   @override
   State<RegisterStoreModal> createState() => _RegisterStoreModalState();
@@ -70,14 +67,6 @@ class _RegisterStoreModalState extends State<RegisterStoreModal> {
                       });
                     },
                   ),
-                  // SizedBox(height: 16),
-                  // TextField(
-                  //   decoration: InputDecoration(
-                  //     border: OutlineInputBorder(),
-                  //     labelText: 'Store Address',
-                  //   ),
-
-                  // ),
                   const SizedBox(height: 16),
                   Wrap(
                     children: _categories
@@ -96,28 +85,17 @@ class _RegisterStoreModalState extends State<RegisterStoreModal> {
                                 child: Chip(
                                   label: Text(e.name ?? ""),
                                   shape: const RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(25)),
+                                    borderRadius: BorderRadius.all(Radius.circular(25)),
                                   ),
-                                  backgroundColor:
-                                      _selectedCategories.contains(e)
-                                          ? Colors.teal
-                                          : Colors.white,
+                                  backgroundColor: _selectedCategories.contains(e) ? Colors.teal : Colors.white,
                                   labelStyle: TextStyle(
-                                    color: _selectedCategories.contains(e)
-                                        ? Colors.white
-                                        : Colors.black,
+                                    color: _selectedCategories.contains(e) ? Colors.white : Colors.black,
                                   ),
                                 ))))
                         .toList(),
                   ),
                   const SizedBox(height: 16),
-                  (_images != null
-                              ? _images
-                                  .map((e) => Image.file(File(e.path)))
-                                  .toList()
-                              : [])
-                          .isNotEmpty
+                  (_images != null ? _images.map((e) => Image.file(File(e.path))).toList() : []).isNotEmpty
                       ? SizedBox(
                           height: 100,
                           width: MediaQuery.of(context).size.width,
@@ -125,37 +103,30 @@ class _RegisterStoreModalState extends State<RegisterStoreModal> {
                             shrinkWrap: true,
                             scrollDirection: Axis.horizontal,
                             itemCount: _images.length + 1,
-                            itemBuilder: (BuildContext context, int index) =>
-                                index < _images.length
-                                    ? Image.file(File(_images[index].path))
-                                    : GestureDetector(
-                                        onTap: () async {
-                                          final ImagePicker picker =
-                                              ImagePicker();
-                                          final XFile? image =
-                                              await picker.pickImage(
-                                                  source: ImageSource.gallery);
-                                          setState(() {
-                                            _images.add(image!);
-                                          });
-                                        },
-                                        child: Container(
-                                          height: 100,
-                                          width: 100,
-                                          color: Colors.grey,
-                                          child: const Icon(Icons.add),
-                                        ),
-                                      ),
-                            separatorBuilder:
-                                (BuildContext context, int index) =>
-                                    const SizedBox(width: 8),
+                            itemBuilder: (BuildContext context, int index) => index < _images.length
+                                ? Image.file(File(_images[index].path))
+                                : GestureDetector(
+                                    onTap: () async {
+                                      final ImagePicker picker = ImagePicker();
+                                      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                                      setState(() {
+                                        _images.add(image!);
+                                      });
+                                    },
+                                    child: Container(
+                                      height: 100,
+                                      width: 100,
+                                      color: Colors.grey,
+                                      child: const Icon(Icons.add),
+                                    ),
+                                  ),
+                            separatorBuilder: (BuildContext context, int index) => const SizedBox(width: 8),
                           ),
                         )
                       : GestureDetector(
                           onTap: () async {
                             final ImagePicker picker = ImagePicker();
-                            final XFile? image = await picker.pickImage(
-                                source: ImageSource.gallery);
+                            final XFile? image = await picker.pickImage(source: ImageSource.gallery);
                             setState(() {
                               _images.add(image!);
                             });
@@ -169,25 +140,29 @@ class _RegisterStoreModalState extends State<RegisterStoreModal> {
                         ),
                   const SizedBox(height: 16),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.deepOrange, // Background color
+                    ),
                     onPressed: () async {
                       Store res = await createStore(Store(
                         name: _storeName,
                       ));
                       String storeId = res.id ?? "";
                       if (storeId != '') {
-                        await createLocationForStore(
-                            storeId,
-                            widget.middlePointOfScreenOnMap.latitude,
-                            widget.middlePointOfScreenOnMap.longitude);
-                        await updateStoreCategories(storeId,
-                            _selectedCategories.map((e) => e.id ?? 0).toList());
+                        await createLocationForStore(storeId, widget.middlePointOfScreenOnMap.latitude, widget.middlePointOfScreenOnMap.longitude);
+                        await updateStoreCategories(storeId, _selectedCategories.map((e) => e.id ?? 0).toList());
                         for (XFile image in _images) {
                           await uploadMedia(storeId, File(image.path));
                         }
                         widget.onRegisterStore();
                       }
                     },
-                    child: const Text("Register"),
+                    child: const Text(
+                      "Register",
+                      style: TextStyle(
+                        color: Colors.white, // Text color
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 16),
                 ],
