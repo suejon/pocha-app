@@ -12,9 +12,12 @@ import 'package:new_mac_test/models/store.dart';
 
 class RegisterStoreModal extends StatefulWidget {
   final LatLng middlePointOfScreenOnMap;
+  final Function onRegisterStore;
 
   const RegisterStoreModal(
-      {super.key, required this.middlePointOfScreenOnMap});
+      {super.key,
+      required this.middlePointOfScreenOnMap,
+      required this.onRegisterStore});
 
   @override
   State<RegisterStoreModal> createState() => _RegisterStoreModalState();
@@ -173,12 +176,15 @@ class _RegisterStoreModalState extends State<RegisterStoreModal> {
                       String storeId = res.id ?? "";
                       if (storeId != '') {
                         await createLocationForStore(
-                            storeId, widget.middlePointOfScreenOnMap.latitude, widget.middlePointOfScreenOnMap.longitude);
+                            storeId,
+                            widget.middlePointOfScreenOnMap.latitude,
+                            widget.middlePointOfScreenOnMap.longitude);
                         await updateStoreCategories(storeId,
                             _selectedCategories.map((e) => e.id ?? 0).toList());
                         for (XFile image in _images) {
                           await uploadMedia(storeId, File(image.path));
                         }
+                        widget.onRegisterStore();
                       }
                     },
                     child: const Text("Register"),
