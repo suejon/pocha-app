@@ -44,12 +44,16 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> loadInitialPoints(List<Location> stores) async {
     for (int i = 0; i < stores.length; i++) {
       List<Media> media = await getMediaByStore(stores[i].storeId.toString());
+      String url = "";
+      if (media != null && media.isNotEmpty && media[0].ref != null && media[0].ref!.isNotEmpty) {
+        url = "https://chjzbaxswixtqvtytkyz.supabase.co/storage/v1/object/public/${media[0].ref!}";
+      }
       markerList.add(
         Marker(
           draggable: true,
           markerId: MarkerId(stores[i].storeId.toString()),
           position: LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble()),
-          icon: await getCustomIcon(stores[i].storeId.toString(), "https://chjzbaxswixtqvtytkyz.supabase.co/storage/v1/object/public/${media[0].ref!}",
+          icon: await getCustomIcon(stores[i].storeId.toString(), url,
               LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble())),
           onTap: () {
             setState(() {
