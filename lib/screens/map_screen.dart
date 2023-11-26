@@ -179,25 +179,23 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return loading != true
         ? Scaffold(
-            floatingActionButton: FloatingActionButton.extended(
-              label: FittedBox(child: Text(appState == "view" ? "Add Markers" : "Confirm Location")),
-              onPressed: () async {
-                if (appState == "view") {
-                  setState(() {
-                    pickedMarker = "";
-                    appState = "reticle";
-                  });
-                } else if (appState == "reticle") {
-                  setState(() {
-                    print("Add new marker and somehow redraw map");
-                    print("Add at$middlePointOfScreenOnMap");
-                    appState = "view";
-                  });
-                }
-                setState(() {});
-              },
-            ),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+            // floatingActionButton: FloatingActionButton.extended(
+            //   label: FittedBox(child: Text(appState == "view" ? "Add Markers" : "Confirm Location")),
+            //   onPressed: () async {
+            //     if (appState == "view") {
+            //       setState(() {
+            //         pickedMarker = "";
+            //         appState = "reticle";
+            //       });
+            //     } else if (appState == "reticle") {
+            //       setState(() {
+            //         appState = "view";
+            //       });
+            //     }
+            //     setState(() {});
+            //   },
+            // ),
+            // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             body: Stack(
               children: [
                 GoogleMap(
@@ -236,22 +234,22 @@ class _MapScreenState extends State<MapScreen> {
                       )
                     : Container(),
                 appState == "reticle" ? RegisterStoreModal(middlePointOfScreenOnMap: middlePointOfScreenOnMap,) : Container(),
-                // Visibility(
-                //   visible: appState == "view",
-                //   child: Positioned(
-                //     bottom: 16,
-                //     right: 16,
-                //     child: FloatingActionButton.extended(
-                //       label: const Text(appState == "view" ? "Add Markers" : "Confirm Location"),
-                //       onPressed: () async {
-                //         setState(() {
-                //           pickedMarker = "";
-                //           appState = "reticle";
-                //         });
-                //       },
-                //     ),
-                //   ),
-                // ),
+                Visibility(
+                  visible: appState == "view",
+                  child: Positioned(
+                    bottom: 16,
+                    left: 16,
+                    child: FloatingActionButton.extended(
+                      label: Text(appState == "view" ? "Add Markers" : "Confirm Location"),
+                      onPressed: () async {
+                        setState(() {
+                          pickedMarker = "";
+                          appState = "reticle";
+                        });
+                      },
+                    ),
+                  ),
+                ),
               ],
             ),
           )
