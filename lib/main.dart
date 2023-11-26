@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:new_mac_test/api/comment.dart';
+import 'package:new_mac_test/screens/login_screen.dart';
 import 'package:new_mac_test/screens/map_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -21,7 +21,27 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MapScreen(),
+      initialRoute: "/",
+      routes: {
+        "/": (context) => const LoginScreen(),
+        "/home": (context) => const MapScreen(),
+      },
+      onUnknownRoute: (RouteSettings settings) {
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (BuildContext context) => const Scaffold(
+            body: Center(
+              child: Text(
+                'Not Found',
+                style: TextStyle(
+                  fontSize: 42,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -15,7 +15,7 @@ import 'package:new_mac_test/models/visit.dart';
 class InfoDraggrableScrollableSheet extends StatefulWidget {
   final String id;
 
-  InfoDraggrableScrollableSheet({super.key, required this.id});
+  const InfoDraggrableScrollableSheet({super.key, required this.id});
 
   @override
   State<InfoDraggrableScrollableSheet> createState() =>
@@ -42,6 +42,9 @@ class _InfoDraggrableScrollableSheetState
   }
 
   initStoreDetails() async {
+    if (widget.id == "") {
+      return;
+    }
     (Store, Location, List<Media>, List<Category>, Visit?) res =
         await getStore(widget.id);
     setState(() {
@@ -67,7 +70,7 @@ class _InfoDraggrableScrollableSheetState
         return _store.$1.id != null ? widget.id != ""
             ? Container(
                 width: MediaQuery.of(context).size.width - 32,
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                 color: Colors.white,
                 child: ListView(
                   controller: scrollController,
@@ -80,10 +83,10 @@ class _InfoDraggrableScrollableSheetState
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     _store.$4.isEmpty
                         ? Container()
-                        : Container(
+                        : SizedBox(
                             height: 60,
                             width: MediaQuery.of(context).size.width,
                             child: ListView.separated(
@@ -95,10 +98,10 @@ class _InfoDraggrableScrollableSheetState
                               scrollDirection: Axis.horizontal,
                               separatorBuilder:
                                   (BuildContext context, int index) =>
-                                      SizedBox(width: 8),
+                                      const SizedBox(width: 8),
                             ),
                           ),
-                    Container(
+                    SizedBox(
                       height: 100,
                       width: MediaQuery.of(context).size.width,
                       child: ListView.separated(
@@ -120,9 +123,9 @@ class _InfoDraggrableScrollableSheetState
                                   color: Colors.grey[300],
                                   child: IconButton(
                                     onPressed: () async {
-                                      final ImagePicker _picker = ImagePicker();
+                                      final ImagePicker picker = ImagePicker();
                                       final XFile? image =
-                                          await _picker.pickImage(
+                                          await picker.pickImage(
                                               source: ImageSource.gallery);
                                       final storeId = _store.$1.id;
                                       if (image != null && storeId != null) {
@@ -131,59 +134,58 @@ class _InfoDraggrableScrollableSheetState
                                         initStoreDetails();
                                       }
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.add,
                                       color: Colors.black,
                                     ),
                                   ),
                                 ),
                           separatorBuilder: (BuildContext context, int index) =>
-                              SizedBox(width: 8)),
+                              const SizedBox(width: 8)),
                     ),
-                    SizedBox(height: 16),
-                    Text(
+                    const SizedBox(height: 16),
+                    const Text(
                       "Address",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       _store.$2.displayAddress ?? "Address",
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                       ),
                     ),
-                    SizedBox(height: 16),
-                    Text(
+                    const SizedBox(height: 16),
+                    const Text(
                       "Last Visit",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     _store.$5 != null
                         ? Text(
                             _store.$5!.visitedAt.toString().split('T')[0],
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                             ),
                           )
-                        : Text(
+                        : const Text(
                             "No visit yet",
                             style: TextStyle(
                               fontSize: 16,
                             ),
                           ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Row(
                       children: [
                         TextButton.icon(
                           style: TextButton.styleFrom(
-                            primary: Colors.green,
-                            backgroundColor: Colors.green[50],
+                            foregroundColor: Colors.green, backgroundColor: Colors.green[50],
                           ),
                           onPressed: () async {
                             await createVisit(Visit(
@@ -192,11 +194,11 @@ class _InfoDraggrableScrollableSheetState
                             ));
                             initStoreDetails();
                           },
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.check,
                             size: 24.0,
                           ),
-                          label: Text('Check in'),
+                          label: const Text('Check in'),
                         ),
                       ],
                     )
