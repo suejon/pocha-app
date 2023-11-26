@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:new_mac_test/components/register_store_modal.dart';
@@ -49,7 +48,7 @@ class _MapScreenState extends State<MapScreen> {
           draggable: true,
           markerId: MarkerId(stores[i].storeId.toString()),
           position: LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble()),
-          icon: await getCustomIcon(stores[i].storeId.toString(), "https://chjzbaxswixtqvtytkyz.supabase.co/storage/v1/object/public/" + media[0].ref!,
+          icon: await getCustomIcon(stores[i].storeId.toString(), "https://chjzbaxswixtqvtytkyz.supabase.co/storage/v1/object/public/${media[0].ref!}",
               LatLng(stores[i].latitude!.toDouble(), stores[i].longitude!.toDouble())),
           onTap: () {
             setState(() {
@@ -184,7 +183,7 @@ class _MapScreenState extends State<MapScreen> {
                 } else if (appState == "reticle") {
                   setState(() {
                     print("Add new marker and somehow redraw map");
-                    print("Add at" + middlePointOfScreenOnMap.toString());
+                    print("Add at$middlePointOfScreenOnMap");
                     appState = "view";
                   });
                 }
