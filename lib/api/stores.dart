@@ -44,7 +44,7 @@ Future<(Store, Location, List<Media>, List<Category>, Visit?)> getStore(
       .from('visit')
       .select()
       .eq('location_id', location['id'])
-      .order('visi3600ted_at')
+      .order('visited_at')
       .limit(1)
       .maybeSingle();
   return (
