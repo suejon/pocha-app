@@ -76,3 +76,13 @@ Future<ExternalAddress> getAddress(double lat, double long) async {
     throw Exception('Failed to load address');
   }
 }
+
+void subscribeToUpdates(Function callback) {
+  supabase.realtime.channel('location').on(
+      RealtimeListenTypes.postgresChanges,
+      ChannelFilter(event: 'INSERT', schema: 'public', table: 'location'),
+      (payload, [ref]) async {
+    print('Change received: ${payload.toString()}');
+    await callback();
+  }).subscribe();
+}

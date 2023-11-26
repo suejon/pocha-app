@@ -38,6 +38,7 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
     requestLocationPermission();
+    subscribeToUpdates(_getStoresVisibleRegion);
   }
 
   Future<void> loadInitialPoints(List<Location> stores) async {
