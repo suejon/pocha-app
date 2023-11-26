@@ -81,7 +81,6 @@ class _MapScreenState extends State<MapScreen> {
       );
       setState(() {
         initialLocation = LatLng(position.latitude, position.longitude);
-        print(initialLocation);
         loading = false;
       });
     } catch (e) {
@@ -168,7 +167,6 @@ class _MapScreenState extends State<MapScreen> {
         northeast.latitude,
       );
       loadInitialPoints(_stores);
-      print(_stores);
     });
   }
 
