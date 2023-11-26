@@ -96,7 +96,7 @@ class _MapScreenState extends State<MapScreen> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: Colors.white,
+                color: Colors.black,
                 width: 2.0,
               ),
             ),
@@ -140,7 +140,7 @@ class _MapScreenState extends State<MapScreen> {
             child: ClipPath(
               clipper: TriangleClipper(),
               child: Container(
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
           ),
